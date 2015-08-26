@@ -10,23 +10,14 @@ class List extends BaseComponent {
         );
     }
     _renderItms() {
-        console.log('************', this.props.data);
         return this.props.data.map((item, i) => {
-            console.log('123', item);
             return (
-                <li key={i}></li>
+                <li key={i}>{item.text}</li>
             );
         });
     }
     render() {
-        const {data} = this.props;
-        console.log('---**', data);
-
         let liHtml = this._renderItms();
-
-        // let items = this._renderItms();
-        // console.log(items);
-
         return (
             <ul>{liHtml}</ul>
         );
@@ -34,7 +25,7 @@ class List extends BaseComponent {
 }
 
 List.propTypes = {
-    data: React.PropTypes.object
+    data: React.PropTypes.array
 };
 
 export default List;

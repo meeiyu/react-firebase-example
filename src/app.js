@@ -10,7 +10,7 @@ class App extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = {
-            testData: {}
+            testData: []
         };
         this._bind(
             '_handleSubmit',
@@ -20,8 +20,14 @@ class App extends BaseComponent {
     componentDidMount() {
         let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/');
         firebaseRef.on('value', function(dataSnapshot) {
-            var data = dataSnapshot.val();
-            this._setData(data);
+            //can use (child_added).
+            let items = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                let item = childSnapshot.val();
+                item['.key'] = childSnapshot.key();
+                items.push(item);
+            });
+            this._setData(items);
         }.bind(this));
     }
     _setData(allData) {
@@ -44,7 +50,7 @@ class App extends BaseComponent {
     render() {
         return (
           <div>
-            <h3>TODO</h3>
+            <h3>Todo List</h3>
                 <form onSubmit={this._handleSubmit}>
                     <input
                         ref="theInput"
