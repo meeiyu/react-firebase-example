@@ -1,2 +1,1 @@
-# react-firebase-example
-react-firebase-example
+# React-Firebase-Example
