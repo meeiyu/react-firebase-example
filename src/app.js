@@ -39,7 +39,7 @@ class App extends BaseComponent {
         e.preventDefault();
         let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/');
         firebaseRef.push({
-            text: $(React.findDOMNode(this.refs.theInput)).val()
+            text: this.refs.theInput.getDOMNode().value
         });
         this._clearAndFocusInput();
     }
@@ -49,16 +49,16 @@ class App extends BaseComponent {
     }
     render() {
         return (
-          <div>
-            <h3>Todo List</h3>
-                <form onSubmit={this._handleSubmit}>
-                    <input
-                        ref="theInput"
-                        placeholder={'請輸入文字'} />
-                    <button>Add</button>
-                </form>
-            <List data={this.state.testData} />
-          </div>
+            <div>
+                <h3>Todo List</h3>
+                    <form onSubmit={this._handleSubmit}>
+                        <input
+                            ref="theInput"
+                            placeholder={'請輸入文字'} />
+                        <button>Add</button>
+                    </form>
+                <List data={this.state.testData} />
+            </div>
         );
     }
 }
