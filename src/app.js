@@ -6,11 +6,15 @@ import BaseComponent from './base-component';
 import Firebase from 'firebase';
 import List from './components/List/list.js';
 
+let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/'),
+    uid;
+
 class App extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = {
-            testData: []
+            testData: [],
+            uid:''
         };
         this._bind(
             '_handleSubmit',
@@ -18,17 +22,36 @@ class App extends BaseComponent {
         );
     }
     componentDidMount() {
-        let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/');
-        firebaseRef.on('value', function(dataSnapshot) {
-            //can use (child_added).
-            let items = [];
-            dataSnapshot.forEach(function(childSnapshot) {
-                let item = childSnapshot.val();
-                item['.key'] = childSnapshot.key();
-                items.push(item);
-            });
-            this._setData(items);
+        //this._readData();
+        firebaseRef.authWithPassword({
+          email    : 'meeiyu@hotmail.com',
+          password : '12345'
+        }, function(error, authData) {
+          if (error) {
+            console.log('Login Failed!', error);
+          } else {
+            console.log('Authenticated successfully with payload:', authData);
+            uid = authData.uid;
+            var ref = firebaseRef.child('users/' + uid);
+            console.log('uid', uid);
+            console.log('ref', ref);
+            ref.on('value', function(dataSnapshot) {
+                //can use (child_added).
+                let items = [];
+                dataSnapshot.forEach(function(childSnapshot) {
+                    let item = childSnapshot.val();
+                    item['.key'] = childSnapshot.key();
+                    items.push(item);
+                    console.log(item);
+                });
+                this._setData(items);
+            }.bind(this));
+          }
         }.bind(this));
+    }
+    _readData() {
+        // console.log('_readData');
+        console.log(this.state.uid);
     }
     _setData(allData) {
         this.setState({
@@ -37,7 +60,6 @@ class App extends BaseComponent {
     }
     _handleSubmit(e) {
         e.preventDefault();
-        let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/');
         firebaseRef.push({
             text: this.refs.theInput.getDOMNode().value
         });
