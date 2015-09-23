@@ -22,36 +22,31 @@ class App extends BaseComponent {
         );
     }
     componentDidMount() {
-        //this._readData();
         firebaseRef.authWithPassword({
-          email    : 'meeiyu@hotmail.com',
-          password : '12345'
+            email    : 'meeiyu@hotmail.com',
+            password : '12345'
         }, function(error, authData) {
-          if (error) {
-            console.log('Login Failed!', error);
-          } else {
-            console.log('Authenticated successfully with payload:', authData);
-            uid = authData.uid;
-            var ref = firebaseRef.child('users/' + uid);
-            console.log('uid', uid);
-            console.log('ref', ref);
-            ref.on('value', function(dataSnapshot) {
-                //can use (child_added).
-                let items = [];
-                dataSnapshot.forEach(function(childSnapshot) {
-                    let item = childSnapshot.val();
-                    item['.key'] = childSnapshot.key();
-                    items.push(item);
-                    console.log(item);
-                });
-                this._setData(items);
+            if (error) {
+                console.log('Login Failed!', error);
+            } else {
+                console.log('Authenticated successfully with payload:', authData);
+                uid = authData.uid;
+                var ref = firebaseRef.child('users/' + uid);
+                console.log('uid', uid);
+                //ref.push({ 'user_id': 'fred', 'text': 'Yabba Dabba Doo!!!!!!!!' });
+                ref.on('value', function(dataSnapshot) {
+                    //can use (child_added).
+                    let items = [];
+                    dataSnapshot.forEach(function(childSnapshot) {
+                        let item = childSnapshot.val();
+                        item['.key'] = childSnapshot.key();
+                        items.push(item);
+                        //console.log(item);
+                    });
+                    this._setData(items);
             }.bind(this));
           }
         }.bind(this));
-    }
-    _readData() {
-        // console.log('_readData');
-        console.log(this.state.uid);
     }
     _setData(allData) {
         this.setState({
