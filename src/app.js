@@ -6,7 +6,7 @@ import BaseComponent from './base-component';
 import Firebase from 'firebase';
 import List from './components/List/list.js';
 
-let firebaseRef = new Firebase('https://mandy-demo.firebaseio.com/'),
+let firebaseRef = new Firebase('https://MandyDemo.firebaseio.com/'),
     uid;
 
 class App extends BaseComponent {
