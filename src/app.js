@@ -13,8 +13,7 @@ class App extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = {
-            testData: [],
-            uid:''
+            testData: []
         };
         this._bind(
             '_handleSubmit',
@@ -22,30 +21,33 @@ class App extends BaseComponent {
         );
     }
     componentDidMount() {
+        this._authenticateUsers();
+    }
+    _authenticateUsers() {
         firebaseRef.authWithPassword({
-            email    : 'meeiyu@hotmail.com',
-            password : '12345'
+            email   : 'meeiyu@hotmail.com',
+            password: '12345'
         }, function(error, authData) {
             if (error) {
                 console.log('Login Failed!', error);
             } else {
                 console.log('Authenticated successfully with payload:', authData);
                 uid = authData.uid;
-                var ref = firebaseRef.child('users/' + uid);
-                console.log('uid', uid);
-                //ref.push({ 'user_id': 'fred', 'text': 'Yabba Dabba Doo!!!!!!!!' });
-                ref.on('value', function(dataSnapshot) {
-                    //can use (child_added).
-                    let items = [];
-                    dataSnapshot.forEach(function(childSnapshot) {
-                        let item = childSnapshot.val();
-                        item['.key'] = childSnapshot.key();
-                        items.push(item);
-                        //console.log(item);
-                    });
-                    this._setData(items);
-            }.bind(this));
-          }
+                this._readAllData();
+            }
+        }.bind(this));
+    }
+    _readAllData() {
+        let ref = firebaseRef.child('list/' + uid);
+            ref.on('value', function(dataSnapshot) {
+                //can use (child_added).
+                let items = [];
+                dataSnapshot.forEach(function(childSnapshot) {
+                    let item = childSnapshot.val();
+                    item['.key'] = childSnapshot.key();
+                    items.push(item);
+                });
+            this._setData(items);
         }.bind(this));
     }
     _setData(allData) {
@@ -54,8 +56,9 @@ class App extends BaseComponent {
         });
     }
     _handleSubmit(e) {
+        let ref = firebaseRef.child('list/' + uid);
         e.preventDefault();
-        firebaseRef.push({
+        ref.push({
             text: this.refs.theInput.getDOMNode().value
         });
         this._clearAndFocusInput();
@@ -66,15 +69,15 @@ class App extends BaseComponent {
     }
     render() {
         return (
-            <div>
+            <div className="todo">
                 <h3>Todo List</h3>
+                    <List data={this.state.testData} />
                     <form onSubmit={this._handleSubmit}>
                         <input
                             ref="theInput"
                             placeholder={'請輸入文字'} />
                         <button>Add</button>
                     </form>
-                <List data={this.state.testData} />
             </div>
         );
     }
